@@ -1,15 +1,28 @@
 '''Fetches the usernames of people who have commented in a specific subreddit for the past user-defined 
-number of comments. Assumes a sqlite database named "usernames.db" in the same directory 
-with a table named "usernames" with a single column with type text'''
+number of comments. '''
 
 import requests
 import pprint
 import sqlite3
+
 import math
 from time import sleep
 
-conn = sqlite3.connect('usernames.db') 
+
+failed = False
+try:
+	conn = sqlite3.connect('comments.db')
+except error as e:
+	failed = True
+	print(e)
+finally:
+	conn.close() 
+	if failed:
+		quit()
+conn = sqlite3.connect('comments.db')
 cur = conn.cursor()
+cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text);')
+
 
 # define the subreddit here
 subreddit = 'news'
@@ -31,10 +44,11 @@ for i in range(comment_gets): #since the pushshift api only supports returning 5
 	# to execute many commands, create a list of tuples to add to the table
 	name_list = []
 	for item in response_json:
-		tuple = (item['author']),
+		tuple = (subreddit,item['author'],item['permalink'],item['body'],item['created_utc'])
+		#print(tuple)
 		name_list.append(tuple)
 
-	cur.executemany('INSERT OR IGNORE INTO usernames VALUES (?)', name_list) # insert the list into the database
+	cur.executemany('INSERT OR IGNORE INTO comments VALUES (?,?,?,?,?)', name_list) # insert the list into the database
 	conn.commit() #commit the database to storage just in case the computer crashes.
 	# slower than committing after the loop, but allows stopping the script without loss of data
 	# sleep(5)
