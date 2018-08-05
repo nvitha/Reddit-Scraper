@@ -18,15 +18,17 @@ except error as e:
 finally:
 	conn.close() 
 	if failed:
+		print("Errored out.")
 		quit()
+
 conn = sqlite3.connect('comments.db')
 cur = conn.cursor()
-cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text);')
+cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text, id text,  PRIMARY KEY(id));')
 
 
 # define the subreddit here
 subreddit = 'news'
-comments_to_get = 1000 #at minimum, will grab 500 unless you set at 0
+comments_to_get = 500000 #at minimum, will grab 500 unless you set at 0
 
 comment_gets = int(math.ceil(float(comments_to_get)/500.00))
 
@@ -44,13 +46,18 @@ for i in range(comment_gets): #since the pushshift api only supports returning 5
 	# to execute many commands, create a list of tuples to add to the table
 	name_list = []
 	for item in response_json:
-		tuple = (subreddit,item['author'],item['permalink'],item['body'],item['created_utc'])
+		try: #not every item has a permalink, so catch that error
+			tuple = (item['subreddit'],item['author'],item['permalink'],item['body'],item['created_utc'], item['id'])
+		except KeyError, e:
+                        tuple = (item['subreddit'],item['author'],"NULL",item['body'],item['created_utc'], item['id'])
 		#print(tuple)
 		name_list.append(tuple)
-
-	cur.executemany('INSERT OR IGNORE INTO comments VALUES (?,?,?,?,?)', name_list) # insert the list into the database
-	conn.commit() #commit the database to storage just in case the computer crashes.
+	try:
+		cur.executemany('INSERT OR IGNORE INTO comments VALUES (?,?,?,?,?,?)', name_list) # insert the list into the database
+		conn.commit() #commit the database to storage just in case the computer crashes.
 	# slower than committing after the loop, but allows stopping the script without loss of data
 	# sleep(5)
+	except:
+		continue
 
 conn.close() # close the connection to the database so that we don't hog resources
