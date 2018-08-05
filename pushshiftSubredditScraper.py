@@ -36,7 +36,7 @@ for i in range(comment_gets): #since the pushshift api only supports returning 5
 	if i == 0: #build the request URL
 		request_string = 'https://api.pushshift.io/reddit/search/comment/?subreddit=' + subreddit + '&size=500'
 	else:
-		request_string = 'https://api.pushshift.io/reddit/search/comment/?subreddit=mademesmile&size=500&before=' + str(last_time)
+		request_string = 'https://api.pushshift.io/reddit/search/comment/?subreddit=' + subreddit + '&size=500&before=' + str(last_time)
 		print(last_time) # prints the epoch time of the when the last comment fetched was submitted to reddit
 
 	response = requests.get(request_string) #request the URL
