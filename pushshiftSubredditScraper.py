@@ -11,8 +11,10 @@ from time import sleep
 
 failed = False
 subreddit = 'news'
+dbname = subreddit + '.db'
+
 try:
-	conn = sqlite3.connect(subreddit +'.db')
+	conn = sqlite3.connect(dbname)
 except error as e:
 	failed = True
 	print(e)
@@ -22,7 +24,7 @@ finally:
 		print("Errored out.")
 		quit()
 
-conn = sqlite3.connect('comments.db')
+conn = sqlite3.connect(dbname)
 cur = conn.cursor()
 cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text, id text,  PRIMARY KEY(id));')
 

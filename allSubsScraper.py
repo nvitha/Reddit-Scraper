@@ -21,7 +21,7 @@ finally:
 		print("Errored out.")
 		quit()
 
-conn = sqlite3.connect('comments.db')
+conn = sqlite3.connect('allsubs.db')
 cur = conn.cursor()
 cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text, id text,  PRIMARY KEY(id));')
 
