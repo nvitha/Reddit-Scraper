@@ -26,14 +26,13 @@ cur = conn.cursor()
 cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, permalink text, body text, timestamp text, id text,  PRIMARY KEY(id));')
 
 
-# define the subreddit here
 comments_to_get = 10000000 #at minimum, will grab 500 unless you set at 0
 
 comment_gets = int(math.ceil(float(comments_to_get)/500.00))
 
 for i in range(comment_gets): #since the pushshift api only supports returning 500 comments at a time
 	if i == 0: #build the request URL
-		request_string = 'https://api.pushshift.io/reddit/search/comment/?subreddit=&size=500'
+		request_string = 'https://api.pushshift.io/reddit/search/comment/?size=500'
 	else:
 		request_string = 'https://api.pushshift.io/reddit/search/comment/?size=500&before=' + str(last_time)
 		print(last_time) # prints the epoch time of the when the last comment fetched was submitted to reddit
