@@ -11,7 +11,7 @@ from time import sleep
 
 failed = False
 try:
-	conn = sqlite3.connect('comments.db')
+	conn = sqlite3.connect('allsubs.db')
 except error as e:
 	failed = True
 	print(e)
@@ -27,7 +27,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, p
 
 
 # define the subreddit here
-comments_to_get = 500000 #at minimum, will grab 500 unless you set at 0
+comments_to_get = 10000000 #at minimum, will grab 500 unless you set at 0
 
 comment_gets = int(math.ceil(float(comments_to_get)/500.00))
 

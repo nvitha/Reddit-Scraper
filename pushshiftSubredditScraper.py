@@ -10,8 +10,9 @@ from time import sleep
 
 
 failed = False
+subreddit = 'news'
 try:
-	conn = sqlite3.connect('comments.db')
+	conn = sqlite3.connect(subreddit +'.db')
 except error as e:
 	failed = True
 	print(e)
@@ -27,7 +28,6 @@ cur.execute('CREATE TABLE IF NOT EXISTS comments (subreddit text, author text, p
 
 
 # define the subreddit here
-subreddit = 'news'
 comments_to_get = 500000 #at minimum, will grab 500 unless you set at 0
 
 comment_gets = int(math.ceil(float(comments_to_get)/500.00))
